@@ -20,19 +20,20 @@ EOF
     sudo apt-mark hold kubelet kubeadm kubectl
 
     # creates a single node cluster
-    sudo kubeadm init --apiserver-advertise-address 10.5.121.15 | tee ~/.kubeadm.log
+    sudo kubeadm init --apiserver-advertise-address 10.5.121.15 --pod-network-cidr 10.6.0.0/24 | tee ~/.kubeadm.log
 
     #kubeconf
     mkdir -p $HOME/.kube
     sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
     sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
-    kubectl apply -f https://docs.projectcalico.org/v3.14/manifests/calico.yaml
+    #kubectl apply -f https://docs.projectcalico.org/v3.14/manifests/calico.yaml
+    kubectl apply -f calico.yaml
     for i in 1 2 3 4 5; do
         kubectl get pods --all-namespaces # to check that all calico pods are running
         kubectl get nodes # master node should be ready now
         sleep 30s
     done
-    kubectl taint nodes --all node-role.kubernetes.io/master- # so that master nodes can run workloads
+    sudo kubectl taint nodes --all node-role.kubernetes.io/master- # so that master nodes can run workloads
 
 fi

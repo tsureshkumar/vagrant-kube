@@ -11,7 +11,7 @@ Vagrant.configure("2") do |config|
       end
 
       master.vm.network "private_network", ip: "10.5.121.15"
-      worker.vm.hostname = "master"
+      master.vm.hostname = "master"
 
       master.vm.provision "shell", path: "docker_install.sh"
       master.vm.provision "shell", path: "kubernetes_install.sh"
